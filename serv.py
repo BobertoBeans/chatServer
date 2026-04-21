@@ -1,7 +1,7 @@
 import socket
 
 serv = socket.socket()
-serv.bind(('10.10.1.178',9090))
+serv.bind(('127.0.0.1',9090))
 serv.listen()
 first = True
 
