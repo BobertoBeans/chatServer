@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+</head>
+<style>
+    body {
+        background-color: black;
+        color: white
+    }
+    .divvy input[type=text] {
+        width: 1683px;
+        background-color: gray;
+        border: 0px;
+        
+    }
+    .container {
+        display: grid;
+        place-items: center;
+    }
+    .divvy {
+        display: flex;
+        box-sizing: border-box;
+        border: 3px outset white;
+        font-size: small;
+        height: 850px;
+        text-align: left;
+        vertical-align: bottom;
+        overflow-y: scroll;
+        overflow-x: clip;
+        overflow: overlay;
+        scrollbar-gutter: stable;
+    }
+    .divvy::-webkit-scrollbar {
+        background: transparent;
+    }
+
+    .divvy p {
+        align-self: flex-end;
+    }
+</style>
+<body>
+    <div class="divvy">
+        <p id="feed"></p>
+    </div>
+    <div class="container">
+        <input type="text" id="input"> <br>
+    </div>
+    <button type="submit" id="submit">Submit</button>
+    <script>
+        const wss = new WebSocket("ws://192.168.1.203:4167")
+        let sendable = true
+        let btn = document.getElementById("submit");
+        let first = true
+        wss.addEventListener('message', (m) => {
+            if (m.toString() === "??quit??") {
+                document.getElementById("feed").innerText += `You've left!`
+            }
+            if (first && m.data === "Enter name: ") {
+                document.getElementById("feed").innerText += `${m.data}`
+            } else if (!first) {
+                document.getElementById("feed").innerText += `\n${m.data}`
+            }
+            sendable = true
+        })
+        if (sendable) {
+            btn.onclick = function() {
+                let val = document.getElementById("input").value;
+                if (first) {
+                    first = false
+                }
+                wss.send(val)
+                sendable = false
+            };
+        }
+    </script>
+</body>
+</html>
