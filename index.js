@@ -1,10 +1,8 @@
 const http = require('http');
 const fs = require('fs');
 const websock = require('ws');
-const port = process.env.PORT || 8080 
 
-const wss = new websock.Server({ port : 4167 })
-const login = new websock.Server({ port : 4169 })
+
 
 const server = http.createServer((req,res) => {
     if (req.method === 'GET' && req.url === "/") {
@@ -20,6 +18,10 @@ const server = http.createServer((req,res) => {
         });
     }
 });
+
+const wss = new websock.Server({ server })
+
+
 
 wss.on('connection', (ws) => {
     let first = true
@@ -55,4 +57,4 @@ function broadcast(msg,name = null) {
     }
 }
 
-server.listen(port,'0.0.0.0');
+server.listen(8080,'0.0.0.0');
