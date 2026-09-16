@@ -14,7 +14,7 @@
         width: 1683px;
         background-color: gray;
         border: 0px;
-        
+
     }
     .container {
         display: grid;
@@ -50,7 +50,7 @@
     </div>
     <button type="submit" id="submit">Submit</button>
     <script>
-        const wss = new WebSocket("ws://192.168.1.203:4167")
+        const wss = new WebSocket(`ws://${window.location.host}`)
         let sendable = true
         let btn = document.getElementById("submit");
         let first = true
