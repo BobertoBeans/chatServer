@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pen</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="divvy">
+        <br>
+        <input type="text" placeholder="Enter username..." id="user">
+        <br>
+        <input type="password" placeholder="Enter password..." id="pass">
+        <br><button class="sub" id="create">create</button>
+        <p id="para"></p>
+      </div>
+    </div>
+
+    <script>
+        const wss = new WebSocket(`ws://${window.location.host}`)
+        let username;
+        let password
+        wss.addEventListener('message',(m) => {
+            if (m.data[0] === 'E' && m.data[1] === ':') {
+                let body = '';
+                for (i=2;i<m.data.length;i++) {
+                    body += m.data[i];
+                };
+                document.getElementById("para").textContent = body;
+                return;
+            } else if (m.data === 'S') {
+                window.location.href("/login");
+            };
+        })
+        document.getElementById("create").onclick = function() {
+          username = document.getElementById("user").value
+          password = document.getElementById("pass").value
+          let json = '~*'
+          json += JSON.stringify({
+            user: username,
+            pass: password
+          })
+          console.log(json)
+          wss.send(json)
+        }
+    </script>
+  </body>
+</html>
