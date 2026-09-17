@@ -10,35 +10,55 @@
         background-color: black;
         color: white
     }
-    .divvy input[type=text] {
-        width: 1683px;
-        background-color: gray;
-        border: 0px;
 
+    .container input:focus {
+        outline: none;
     }
+
     .container {
         display: grid;
         place-items: center;
+        width: 98.08vw;
+        height: 3vh;
+        background-color: black;
+        border: 3px solid white;
+        border-top: 0px;
+        padding-right: 3px;
     }
+
+    .container input {
+        border: 0px;
+        background-color: black;
+        color: white;
+        justify-self: left;
+        width: 91vw;
+    }
+
     .divvy {
         display: flex;
         box-sizing: border-box;
-        border: 3px outset white;
+        border: 3px solid white;
         font-size: small;
-        height: 850px;
+        height: 90.62vh;
+        width: 98.56vw;
         text-align: left;
         vertical-align: bottom;
-        overflow-y: scroll;
-        overflow-x: clip;
-        overflow: overlay;
-        scrollbar-gutter: stable;
+        overflow-y: auto;
+        overflow-wrap: anywhere;
     }
+    
     .divvy::-webkit-scrollbar {
-        background: transparent;
+        display: none;
+    }
+
+    .sub {
+        position: absolute;
+        justify-self: right;;
     }
 
     .divvy p {
         align-self: flex-end;
+        margin-top: auto;
     }
 </style>
 <body>
@@ -46,32 +66,65 @@
         <p id="feed"></p>
     </div>
     <div class="container">
-        <input type="text" id="input"> <br>
+        <input type="text" id="input"> 
+        <button type="submit" id="submit" class="sub">send</button>
     </div>
-    <button type="submit" id="submit">Submit</button>
+    <button id="logout" hidden="true">log out</button>
+    <button id="login" hidden="true">log in</button>
     <script>
-        const wss = new WebSocket(`wss://${window.location.host}`)
+        const wss = new WebSocket(`ws://${window.location.host}`)
+        const inp = document.getElementById("input");
+        function getCookie(name) {
+          const value = `; ${document.cookie}`;
+          const parts = value.split(`; ${name}=`);
+          if (parts.length === 2) return parts.pop().split(';').shift();
+        }
         let sendable = true
         let btn = document.getElementById("submit");
         let first = true
+        if (!getCookie("user")) {
+            document.getElementById("login").hidden = false
+        } else {
+            document.getElementById("logout").hidden = false
+        }
         wss.addEventListener('message', (m) => {
-            if (m.toString() === "??quit??") {
+            if (m.data === "??quit??") {
                 document.getElementById("feed").innerText += `You've left!`
             }
-            if (first && m.data === "Enter name: ") {
-                document.getElementById("feed").innerText += `${m.data}`
+            else if (first && m.data === "Enter name: ") {
+                if (!getCookie("user")) {
+                    document.getElementById("feed").innerText += `${m.data}`
+                } else {
+                    wss.send(getCookie("user"))
+                }
             } else if (!first) {
                 document.getElementById("feed").innerText += `\n${m.data}`
             }
             sendable = true
         })
+
+        document.getElementById("login").onclick = function() {
+            window.location.href("/login");
+        }
+
+        document.getElementById("logout").onclick = function() {
+            document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+            window.location.href("/")
+        }
+
+        inp.addEventListener('keypress',(event) => {
+            if (event.key == "Enter") {
+                btn.click()
+            }
+        })
+
         if (sendable) {
             btn.onclick = function() {
-                let val = document.getElementById("input").value;
                 if (first) {
                     first = false
                 }
-                wss.send(val)
+                wss.send(inp.value)
+                inp.value = ""
                 sendable = false
             };
         }
