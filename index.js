@@ -1,8 +1,8 @@
 const http = require('http');
 const fs = require('fs');
 const websock = require('ws');
-
-
+const crypto = require('crypto');
+console.log(hash("1234"))
 
 const server = http.createServer((req,res) => {
     if (req.method === 'GET' && req.url === "/") {
@@ -53,7 +53,9 @@ const server = http.createServer((req,res) => {
 });
 const wss = new websock.Server({ server })
 
-
+function hash(data) {
+  return crypto.createHash('sha256').update(data).digest('hex');
+}
 
 wss.on('connection', (ws) => {
     let first = true
@@ -69,7 +71,7 @@ wss.on('connection', (ws) => {
                     if (!user) {
                         ws.send("E:Incorrect username")
                     }else {
-                        if (user.pass === str.pass) {
+                        if (user.pass === hash(str.pass)) {
                             ws.send("S")
                         }
                     }
@@ -86,6 +88,7 @@ wss.on('connection', (ws) => {
                         let str = JSON.parse(body)
                         let user = jason.find((user) => str.user === user.user)
                         if (!user) {
+                            str.pass = hash(str.pass)
                             jason.push(str)
                             fs.writeFile("accounts.json",JSON.stringify(jason),err => {
                                 if (err) throw err
