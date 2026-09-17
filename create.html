@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pen</title>
+    <title>create account</title>
   </head>
   <body>
     <div class="container">
@@ -31,7 +31,7 @@
                 document.getElementById("para").textContent = body;
                 return;
             } else if (m.data === 'S') {
-                window.location.href("/login");
+                window.location.replace("/login");
             };
         })
         document.getElementById("create").onclick = function() {
