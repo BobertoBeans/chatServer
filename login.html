@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
+    <title>Pen</title>
   </head>
   <body>
     <div class="container">
@@ -21,7 +21,7 @@
     </div>
 
     <script>
-        const wss = new WebSocket(`wss://${window.location.host}`)
+        const wss = new WebSocket(`ws://${window.location.host}`)
         let username;
         let password
         wss.addEventListener('message',(m) => {
@@ -35,7 +35,7 @@
             } else if (m.data === 'S') {
                 document.cookie = `user=${username}; path=/`
                 document.cookie = `pass=$ pass=${password}; path=/`
-                window.location.href("/");
+                window.location.replace("/");
             };
         })
         document.getElementById("submit").onclick = function() {
@@ -48,7 +48,7 @@
           wss.send(json)
         }
         document.getElementById("create").onclick = function() {
-          window.location.href("/create")
+          window.location.replace("/create")
         }
     </script>
   </body>
