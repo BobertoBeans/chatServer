@@ -19,7 +19,7 @@
     </div>
 
     <script>
-        const wss = new WebSocket(`ws://${window.location.host}`)
+        const wss = new WebSocket(`wss://${window.location.host}`)
         let username;
         let password
         wss.addEventListener('message',(m) => {
