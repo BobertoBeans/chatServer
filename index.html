@@ -72,7 +72,7 @@
     <button id="logout" hidden="true">log out</button>
     <button id="login" hidden="true">log in</button>
     <script>
-        const wss = new WebSocket(`ws://${window.location.host}`)
+        const wss = new WebSocket(`wss://${window.location.host}`)
         const inp = document.getElementById("input");
         function getCookie(name) {
           const value = `; ${document.cookie}`;
