@@ -72,7 +72,7 @@
     <button id="logout" hidden="true">log out</button>
     <button id="login" hidden="true">log in</button>
     <script>
-        const wss = new WebSocket(`wss://${window.location.host}`)
+        const wss = new WebSocket(`ws://${window.location.host}`)
         const inp = document.getElementById("input");
         function getCookie(name) {
           const value = `; ${document.cookie}`;
@@ -104,12 +104,12 @@
         })
 
         document.getElementById("login").onclick = function() {
-            window.location.href("/login");
+            window.location.replace("/login");
         }
 
         document.getElementById("logout").onclick = function() {
             document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
-            window.location.href("/")
+            window.location.replace("/")
         }
 
         inp.addEventListener('keypress',(event) => {
